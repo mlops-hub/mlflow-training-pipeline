@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"  crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
+    <title>Animal Classifier App</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4 p-2">Animal Classifier App</h1>
+
+        <section>
+            <form id="animal_form" class="w-75 mx-auto mb-2">
+                <input name='userInput' id="userInput" placeholder='animal name' />
+                <button type='submit' class="w-25 btn btn-success my-4 mx-auto"> Submit </button>
+            </form>
+        </section>
+
+        <section id="features-section" class="hidden">
+            <h3>Find animal class with features</h3>
+            <form id='prediction_form' class="w-75 mx-auto mb-2">   
+                <div class="row justify-content-between">
+                    <table>
+                        <tr>
+                        <th>Hair: </th>
+                        <td>
+                            <input id="'hair" name='hair' class="form-control" />
+                        </td>
+                        </tr>
+
+                        <tr>
+                        <th>Milk: </th>
+                        <td>
+                            <input name='milk'  id="milk" class="form-control" />
+                        </td>
+                        </tr>
+
+                        <tr>
+                        <th>Legs: </th>
+                        <td>
+                            <input name='legs' id="legs" class="form-control" />
+                        </td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                        <th>Can Swim: </th>
+                        <td>
+                            <input name='can_swim' id="can_swim" class="form-control" />
+                        </td>
+                        </tr>
+
+                        <tr>
+                        <th>Backbone: </th>
+                        <td>
+                            <input name='backbone' id="backbone" class="form-control" />
+                        </td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                        <th>Breathes: </th>
+                        <td>
+                            <input name='breathes' id="breathes" class="form-control" />
+                        </td>
+                        </tr>
+
+                        <tr>
+                        <th>Eggs: </th>
+                        <td>
+                            <input name='eggs' id="eggs" class="form-control" />
+                        </td>
+                        </tr>
+
+                        <tr>
+                        <th>Can Fly: </th>
+                        <td>
+                            <input name='can_fly' id="can_fly" class="form-control" />
+                        </td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                        <th>Predator: </th>
+                        <td>
+                            <input name='predator' id="predator" class="form-control" />
+                        </td>
+                        </tr>
+
+                        <tr>
+                        <th>Toothed: </th>
+                        <td>
+                            <input name='toothed' id="toothed" class="form-control" />
+                        </td>
+                        </tr>
+
+                        <tr>
+                        <th>Venomous: </th>
+                        <td>
+                            <input name='venomous' id="venomous" class="form-control" />
+                        </td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                        <th>Tail: </th>
+                        <td>
+                            <input name='tail' id="tail" class="form-control" />
+                        </td>
+                        </tr>
+
+                        <tr>
+                        <th>Is Domestic Pet: </th>
+                        <td>
+                            <input name='is_domestic_pet' id="is_domestic_pet" class="form-control" />
+                        </td>
+                        </tr>
+                    </table>      
+                </div>
+            
+                <div class="row">
+                    <button type="submit" class="w-25 btn btn-success my-4 mx-auto">Predict</button>
+                </div>
+            </form>
+        </section>
+        
+        <p id="msg"></p>
+        <p id="result" class="border border-secondary w-50 text-left p-4 mx-auto"></p>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

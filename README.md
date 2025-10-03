@@ -117,76 +117,113 @@ classifier_model
 
 ```bash
 git clone https://github.com/mlops-hub/classifier-model.git
-cd classifier-model
+cd mlflow-training-pipeline
 ```
 
 #### Step-2: Create Virtual Environment
 
+`ml/` folder is where all model and backend related files stored.
+
 ##### Windows
 
 ```bash
+cd ml
+
 python -m venv venv
 venv\Scripts\activate
 ```
 ##### Mac and Linux
+
 ```bash
+cd ml
+
 python3 -m venv venv
 source venv/bin/activate
 ```
+
 #### Step-3: Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-#### Step-4: Run the Model Workflow step-by-step
+#### Step-4: Run the Model Workflow Step-by-Step
 
-**Flow of Code Run**
+**1. Run notebook/ingestion**
 
 ```bash
-src/ -> data_pipeline.py   ->  model_pipeline.py
-        |__ ingestion           |__ train
-        |__ validation          |__ evaluation
-        |__ eda                 |__ validation
-        |__ cleaning            |__ tuning
-        |__ feature_engg         
-        |__ preprocessing
+cd notebooks/ingestion
+```
+
+- Click 'run all' in tab
+- This will load merged dataset at `data/indestion/*.csv`. This is dataset used for ml pipelines.
+
+**2. Run data-pipeline code**
+
+```bash
+python -m src.data_pipeline.index
 
 ```
 
-- **Data Pipeline**:
-Run each file step-by-step to load data, preprocess data, train and save the model.
+**3. Run feast to store preprocessed-dataset**
 
+On new terminal, go to `feature_store/` floder 
 ```bash
-cd src/data-pipeline
-python 01-ingestion.py
-python 02-validation.py
-python 03-eda.py
-python 04-cleaning.py
-python 05-feature_engg.py
-python 06-reprocessing.py
+cd feature_store
 ```
 
-- **Model Pipleine**
-Once preprocessed dataset is saved, run each model pipeline step-by-step.
-
 ```bash
-cd src/model-pipeline
-python 01-training.py
-python 02-evaluation.py
-python 03-validation.py
-python 04-tuning.py
+If deployed in Cloud.. Use azure/aws credentials here...
 ```
 
-#### Step-5: Testing/Prediction
+**For bash terminal**
+```bash
+export POSTGRES_USER=<postgres-name>
+export POSTGRES_PASSWORD=<postgres-password>
+export POSTGRES_HOST=<postgres-host>
+export POSTGRES_PORT=<postgres-port>
+export POSTGRES_DB=<postgres-db-name>
 
-Run [`inference_test.py`](./src/predict/inference_test.py) to make predictions. If 'animal' is not found, you will be prompted to enter animal features, and the model will predict the class.
+export REDIS_HOST=<redis-host>
+export REDIS_PORT=<redis-port>
+```
+
+```bash
+feast apply
+
+feast materialize-incremental 2025-12-31T23:59:59
+
+python main.py
+
+```
+
+**4. Run Mlflow**
+
+```bash
+mlflow server
+```
+
+
+**5. Run model-pipeline code**
+
+```bash
+python -m src.model_pipeline.index
+
+```
+
+
+#### Step-4: Testing/Prediction
+
+Run [`inference_test.py`](./src/tests/inference_test.py) to make predictions. If 'animal' is not found, you will be prompted to enter animal features, and the model will predict the class.
 
 ```bash
 cd src/predict
 python inference_test.py
 ```
 
+#### Run Frotnend
+
+At [flask-app](./flask_app/)
 
 ## Contribution
 
@@ -195,3 +232,5 @@ Please read our [Contributing Guidelines](CONTRIBUTION.md) before submitting pul
 
 ## License
 This project is under [MIT Licence](LICENCE) support.
+
+

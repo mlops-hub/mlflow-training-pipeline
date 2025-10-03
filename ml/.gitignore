@@ -1,0 +1,11 @@
+.env
+venv/
+__pycache__/
+*/__pychace__/
+
+data/cleaned/
+data/eda/
+data/preprocess/
+data/feature_engg/
+
+feature_store/data/

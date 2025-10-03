@@ -1,52 +1,0 @@
-
-t
-T
-animal_nameUnique name of the animal"animal_nameJmlops_animal_classification
-É¡ÛÆÈÏÈ™Ø¡ÛÆØ®Ø 
-R
-2
-__dummy"
-__dummy_idJmlops_animal_classification
-É¡ÛÆÈÏÈ™Ø¡ÛÆØ®Ø 1"$562eb8eb-db42-4218-8c91-f4e4fcbb854a*Ø¡ÛÆ ì£Ä2ç
-–
-animal_preprocessed_featuresmlops_animal_classificationanimal_name"
-hair"
-eggs"
-milk"
-predator"
-toothed"
-backbone"
-breathes"
-venomous"
-legs"
-tail"
-can_fly"
-can_swim"
-is_domestic_pet2€ç„:Ševent_timestampZ data/preprocessed_data.parquetŠ1feast.infra.offline_stores.file_source.FileSource¢data/preprocessed_data.parquet@b
-animal_nameL
-É¡ÛÆÈÏÈ™Ø¡ÛÆÈîÄ
-ÑºÖ·ˆä‹µÿñÖÊ
-ÿñÖÊ°¼ÜÆ˜Ì×¤:÷
-Ö
-animal_features_servicemlops_animal_classification
-animal_preprocessed_features
-hair
-eggs
-milk
-predator
-toothed
-backbone
-breathes
-venomous
-legs
-tail
-can_fly
-can_swim
-is_domestic_petBVevent_timestampZ data/preprocessed_data.parquet¢data/preprocessed_data.parquet
-É¡ÛÆˆÔ…šØ¡ÛÆØ®Ø RÅ
-Â
-,feast.infra.online_stores.sqlite.SqliteTable"‘
-UC:\Users\DELL\OneDrive\Desktop\CrunchOps\mlops-hub\mlops\feature_store\data\online.db8mlops_animal_classification_animal_preprocessed_featuresb¨event_timestampZ data/preprocessed_data.parquetŠ1feast.infra.offline_stores.file_source.FileSource¢data/preprocessed_data.parquetªmlops_animal_classificationŠ=
-
-mlops_animal_classification
-É¡ÛÆè˜›úÉ¡ÛÆè˜›ú
