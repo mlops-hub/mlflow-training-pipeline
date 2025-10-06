@@ -3,7 +3,6 @@ import re
 import os
 
 PROJECT_ROOT = os.getcwd()
-# print(os.getcwd())
 
 DATASET_PATH = os.path.join(PROJECT_ROOT, "data/ingestion/merged_df.csv")
 

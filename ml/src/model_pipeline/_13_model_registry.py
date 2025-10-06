@@ -1,30 +1,36 @@
-from dotenv import load_dotenv
-import joblib
 import os
 import mlflow
 import mlflow.sklearn
+from mlflow.tracking import MlflowClient
+from mlflow.models import infer_signature
 
+PROJECT_ROOT = os.getcwd()
 
-def model_registry(best_model, accuracy_metric, accuracy_ht, best_params, feature_names):
-    mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000"))
-    mlflow.set_experiment("Animal Classification")
+def model_registry(best_model, X_train): 
+    client = MlflowClient()
 
-    with mlflow.start_run(run_name="animal_calssification") as run:
-        mlflow.log_metric("base_model_accuracy", accuracy_metric)
-        mlflow.log_metric("best_model_accuracy", accuracy_ht)
+    # Infer model signature
+    signature = infer_signature(X_train, best_model.predict(X_train))
 
-        mlflow.log_param("best_params", str(best_params))
-        mlflow.sklearn.log_model(
+    # Log the model
+    model_info = mlflow.sklearn.log_model(
             sk_model=best_model,
-            name="LogisticRegression",
-            registered_model_name="Animal Classifier Model", # Register the model in MLflow Model Registry
-        )
-        # save model artifact
-        OUTPUT_DIR = "utility"
-        os.makedirs(f"{OUTPUT_DIR}", exist_ok=True)
+            artifact_path="model",
+            signature=signature,
+            input_example=X_train[:5],  # Sample input for documentation
+    )
 
-        mlflow.log_artifact(f"{OUTPUT_DIR}/scaler.pkl", artifact_path="preprocessor")
+    # DEBUG: Check where artifacts are stored
+    print(f"Model URI: {model_info.model_uri}")
+    registered_model = mlflow.register_model(
+            model_uri=model_info.model_uri,
+            name="Animal Classifier Model"
+    )
 
-        joblib.dump(feature_names, f"{OUTPUT_DIR}/features_names.pkl")
-        mlflow.log_artifact(f"{OUTPUT_DIR}/features_names.pkl", artifact_path="preprocessor")
-
+    # Use tags to track model status and metadata
+    client.set_model_version_tag(
+            name="Animal Classifier Model",
+            version=registered_model.version,
+            key="production_ready",
+            value="approved",
+    )

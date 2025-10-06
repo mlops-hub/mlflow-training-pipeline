@@ -9,6 +9,13 @@ load_dotenv()
 
 PROJECT_ROOT = os.getcwd()
 
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data/prepared/prepared_df.csv")
+os.makedirs(os.path.dirname(OUTPUT_DIR), exist_ok=True)    
+
+OUTPUT_PARQUET_PATH = os.path.join(PROJECT_ROOT, 'feature_store/data/preprocessed_data.parquet')
+os.makedirs(os.path.dirname(OUTPUT_PARQUET_PATH), exist_ok=True)    
+
+
 def feature_engg(df):
     df['can_fly'] = (df['airborne'] == 1) & (df['feathers'] == 1).astype(int)
     df['can_swim'] = (df['aquatic'] == 1) & (df['fins'] == 1).astype(int)
@@ -22,7 +29,6 @@ def feature_engg(df):
     print(df.head(3))
     return df
 
-
 def prepare_data_for_feast(df):
     # Create unique employee_id and timestamp for Feast
     final_df = df.copy()
@@ -32,21 +38,17 @@ def prepare_data_for_feast(df):
 
     print('final-dataset: ', final_df)
 
-    # ensoure output_data directory exists !
-    output_parquet_path = os.path.join(PROJECT_ROOT, 'feature_store/data/preprocessed_data.parquet')
-    os.makedirs(os.path.dirname(output_parquet_path), exist_ok=True)    
-    
-    # save to parquet
-    final_df.to_parquet(output_parquet_path, index=False)
+    # ensure output_data directory exists !
+    os.makedirs(os.path.dirname(OUTPUT_PARQUET_PATH), exist_ok=True)    
+    final_df.to_parquet(OUTPUT_PARQUET_PATH, index=False)
+
+    # save in local file as well
+    final_df.to_csv(OUTPUT_DIR, index=False)
 
     print("Data preparation complete and saved successfully.")
     print(f"Final data columns: {final_df.columns.tolist()}")
     print("Column names: ", {final_df.shape})
-    
 
-# Data preparation complete and saved successfully.
-# Final data columns: ['animal_name', 'hair', 'eggs', 'milk', 'predator', 'toothed', 'backbone', 'breathes', 'venomous', 'legs', 'tail', 'can_fly', 'can_swim', 'is_domestic_pet', 'class_name', 'event_timestamp']        
-# Column names:  {(119, 16)}
 
 
 def get_data_from_feast():
@@ -69,7 +71,10 @@ def get_data_from_feast():
         return None
     
     entity_df = pd.read_parquet(preprocessed_df_path, columns=['animal_name', 'event_timestamp'])
-    all_features_to_fetch_from_feast = [f"animal_preprocessed_features:{feature}" for feature in MODEL_INPUT_FEATURE_ORDER]
+    all_features_to_fetch_from_feast = [
+        f"animal_preprocessed_features:{feature}" 
+        for feature in MODEL_INPUT_FEATURE_ORDER
+    ]
 
     training_df = fs.get_historical_features(
         entity_df=entity_df,

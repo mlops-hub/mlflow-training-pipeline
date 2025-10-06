@@ -1,33 +1,15 @@
-project: mlops_animal_classification
+project: mlops_project
 registry: 
   registry_type: sql
-  path: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+  path: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
   cache_ttl_seconds: 60
   sqlalchemy_config_kwargs:
       echo: false
       pool_pre_ping: true
 online_store:
     type: redis
-    connection_string: "${REDIS_HOST:=localhost}:${REDIS_PORT:=6379}"
+    connection_string: "${REDIS_HOST}:${REDIS_PORT}"
 offline_store:
     type: file
 
-entity_key_serialization_version: 1
-
-# registry: data/registry.db # Path to the Feast registry file, relative to feature_store/
-# provider: local
-# online_store:
-#     type: redis
-#     connection_string: "2.222.222.222:30000"
-# offline_store:
-#     type: file
-
-
-# project: mlops_animal_classification
-# registry: data/registry.db # Path to the Feast registry file, relative to feature_store/
-# provider: local
-# offline_store:
-#     type: file
-# online_store:
-#   type: sqlite
-#   path: data/online.db
+entity_key_serialization_version: 2

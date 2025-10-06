@@ -10,129 +10,137 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center mb-4 p-2">Animal Classifier App</h1>
+        <header class="app-header text-center">
+            <h1>Animal Classifier App</h1>
+            <p>Identify animal classes by name or by their biological features</p>
+        </header>
 
-        <section>
-            <form id="animal_form" class="w-75 mx-auto mb-2">
-                <input name='userInput' id="userInput" placeholder='animal name' />
-                <button type='submit' class="w-25 btn btn-success my-4 mx-auto"> Submit </button>
-            </form>
-        </section>
-
-        <section id="features-section" class="hidden">
-            <h3>Find animal class with features</h3>
-            <form id='prediction_form' class="w-75 mx-auto mb-2">   
-                <div class="row justify-content-between">
-                    <table>
-                        <tr>
-                        <th>Hair: </th>
-                        <td>
-                            <input id="'hair" name='hair' class="form-control" />
-                        </td>
-                        </tr>
-
-                        <tr>
-                        <th>Milk: </th>
-                        <td>
-                            <input name='milk'  id="milk" class="form-control" />
-                        </td>
-                        </tr>
-
-                        <tr>
-                        <th>Legs: </th>
-                        <td>
-                            <input name='legs' id="legs" class="form-control" />
-                        </td>
-                        </tr>
-                    </table>
-
-                    <table>
-                        <tr>
-                        <th>Can Swim: </th>
-                        <td>
-                            <input name='can_swim' id="can_swim" class="form-control" />
-                        </td>
-                        </tr>
-
-                        <tr>
-                        <th>Backbone: </th>
-                        <td>
-                            <input name='backbone' id="backbone" class="form-control" />
-                        </td>
-                        </tr>
-                    </table>
-
-                    <table>
-                        <tr>
-                        <th>Breathes: </th>
-                        <td>
-                            <input name='breathes' id="breathes" class="form-control" />
-                        </td>
-                        </tr>
-
-                        <tr>
-                        <th>Eggs: </th>
-                        <td>
-                            <input name='eggs' id="eggs" class="form-control" />
-                        </td>
-                        </tr>
-
-                        <tr>
-                        <th>Can Fly: </th>
-                        <td>
-                            <input name='can_fly' id="can_fly" class="form-control" />
-                        </td>
-                        </tr>
-                    </table>
-
-                    <table>
-                        <tr>
-                        <th>Predator: </th>
-                        <td>
-                            <input name='predator' id="predator" class="form-control" />
-                        </td>
-                        </tr>
-
-                        <tr>
-                        <th>Toothed: </th>
-                        <td>
-                            <input name='toothed' id="toothed" class="form-control" />
-                        </td>
-                        </tr>
-
-                        <tr>
-                        <th>Venomous: </th>
-                        <td>
-                            <input name='venomous' id="venomous" class="form-control" />
-                        </td>
-                        </tr>
-                    </table>
-
-                    <table>
-                        <tr>
-                        <th>Tail: </th>
-                        <td>
-                            <input name='tail' id="tail" class="form-control" />
-                        </td>
-                        </tr>
-
-                        <tr>
-                        <th>Is Domestic Pet: </th>
-                        <td>
-                            <input name='is_domestic_pet' id="is_domestic_pet" class="form-control" />
-                        </td>
-                        </tr>
-                    </table>      
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        Search by Animal Name
+                    </div>
+                    <div class="card-body">
+                        <form id="animal_form" class="mb-2">
+                            <div class="mb-3">
+                                <label for="userInput" class="form-label">Enter an animal name:</label>
+                                <input type="text" name="userInput" id="userInput" class="form-control" placeholder="e.g., lion, eagle, dolphin">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                Search Animal
+                            </button>
+                        </form>
+                    </div>
                 </div>
+            </div>
             
-                <div class="row">
-                    <button type="submit" class="w-25 btn btn-success my-4 mx-auto">Predict</button>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                       How It Works
+                    </div>
+                    <div class="card-body">
+                        <p>This animal classifier can identify animals in two ways:</p>
+                        <ul>
+                            <li><strong>Search by Name:</strong> Enter an animal name to get its classification</li>
+                            <li><strong>Classify by Features:</strong> Fill in the biological features to predict the animal class</li>
+                        </ul>
+                        <p>The classifier uses machine learning to analyze features and provide accurate classifications.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section id="features-section" class="feature-section hidden">
+            <h3>Classify Animal by Features</h3>
+            <form id='prediction_form' class="mb-2">
+                <div class="feature-grid">
+                    <div class="feature-group">
+                        <label for="animal_name">Animal Name:</label>
+                        <input type="text" name="animal_name" id="animal_name" class="form-control" placeholder="lion, rat etc...">
+                    </div>
+
+                    <div class="feature-group">
+                        <label for="hair">Hair:</label>
+                        <input type="text" name="hair" id="hair" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="milk">Milk:</label>
+                        <input type="text" name="milk" id="milk" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="legs">Legs:</label>
+                        <input type="number" name="legs" id="legs" class="form-control" placeholder="Number of legs">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="can_swim">Can Swim:</label>
+                        <input type="text" name="can_swim" id="can_swim" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="backbone">Backbone:</label>
+                        <input type="text" name="backbone" id="backbone" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="breathes">Breathes:</label>
+                        <input type="text" name="breathes" id="breathes" class="form-control" placeholder="Lungs/Gills">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="eggs">Eggs:</label>
+                        <input type="text" name="eggs" id="eggs" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="can_fly">Can Fly:</label>
+                        <input type="text" name="can_fly" id="can_fly" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="predator">Predator:</label>
+                        <input type="text" name="predator" id="predator" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="toothed">Toothed:</label>
+                        <input type="text" name="toothed" id="toothed" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="venomous">Venomous:</label>
+                        <input type="text" name="venomous" id="venomous" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="tail">Tail:</label>
+                        <input type="text" name="tail" id="tail" class="form-control" placeholder="Yes/No">
+                    </div>
+                    
+                    <div class="feature-group">
+                        <label for="is_domestic_pet">Is Domestic Pet:</label>
+                        <input type="text" name="is_domestic_pet" id="is_domestic_pet" class="form-control" placeholder="Yes/No">
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        Predict Animal Class
+                    </button>
                 </div>
             </form>
         </section>
         
-        <p id="msg"></p>
-        <p id="result" class="border border-secondary w-50 text-left p-4 mx-auto"></p>
+        <div id="msg" class="mt-3"></div>
+        
+        <div id="result" class="result-container hidden">
+            <div class="result-title">Classification Result:</div>
+            <div id="result-content">Results will appear here...</div>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>

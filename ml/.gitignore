@@ -9,3 +9,7 @@ data/preprocess/
 data/feature_engg/
 
 feature_store/data/
+
+models/
+logs/
+utility/

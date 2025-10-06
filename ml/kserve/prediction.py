@@ -7,11 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MLFLOW_TRACKING_URI = os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000")
-MODEL_NAME = "Animal Classifier Model"
-MODEL_VERSION = "1"
-
-
-mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+MODEL_VERSION = os.environ.get("MODEL_VERSION", "1")
+MODEL_NAME = os.environ.get("MODEL_NAME", "Animal Classifier")
+KSERVE_PORT = os.environ.get("KSERVE_PORT", 7070)
 
 
 class AnimalClassPrediction(Model):
@@ -44,9 +42,7 @@ class AnimalClassPrediction(Model):
         
         # Predict using MLflow model
         predictions = self.model.predict(df)
-        prediction_proba = self.model.predict_proba(df)[0][1]
         print(f"prediction: {predictions}")
-        print(f"prediction_proba: {prediction_proba}")
 
         # Return results as list
         return {
@@ -60,8 +56,7 @@ if __name__ == "__main__":
     print(f"Using Mlflow tracking URI: {MLFLOW_TRACKING_URI}")
     print(f"Using model registry uri: {model_uri}")
 
-    server = ModelServer(http_port=7070)
-    print(f"mlflow-url in kserve: {os.environ.get("MLFLOW_ARTIFACT_URL")}")
+    server = ModelServer(http_port=KSERVE_PORT)
 
     model = AnimalClassPrediction(
         name="mlops_animal_classifer",

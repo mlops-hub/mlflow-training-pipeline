@@ -40,14 +40,13 @@ def check_schema(df):
     except pa.errors.SchemaErrors as err:
         print("Data validation failed:")
         print(err.failure_cases)
-        return None
 
-        # # log error
-        # output_dir = os.path.join(PROJECT_ROOT, "logs/validation")
-        # os.makedirs(output_dir, exist_ok=True)
+        # log error
+        output_dir = os.path.join(PROJECT_ROOT, "logs/validation")
+        os.makedirs(output_dir, exist_ok=True)
         
-        # err.failure_cases.to_csv(f"{output_dir}/error_df.csv", index=False)
-        # print(f"Error saved to: {output_dir}/error_df.csv")
+        err.failure_cases.to_csv(f"{output_dir}/error_df.csv", index=False)
+        return None
 
 
 

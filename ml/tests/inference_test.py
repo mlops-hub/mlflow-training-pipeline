@@ -129,9 +129,3 @@ if __name__ == "__main__":
             print("👋🏻 Bye")
             break
         predict_animal(animal_name)
-
-
-
-# Created version '1' of model 'Animal Classifier Model'.
-# 🏃 View run animal_calssification at: http://localhost:5000/#/experiments/1/runs/5a69d14e57ef42f3820ec18e756a11b5
-# 🧪 View experiment at: http://localhost:5000/#/experiments/1

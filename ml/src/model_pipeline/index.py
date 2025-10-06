@@ -4,28 +4,35 @@ from src.model_pipeline._10_evaluation import evaluation
 from src.model_pipeline._11_validation import validation
 from src.model_pipeline._12_tuning import tuning
 from src.model_pipeline._13_model_registry import model_registry
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import os
-import pandas as pd
 from pathlib import Path
+import mlflow
 
 
 PROJECT_ROOT = Path(os.getcwd())
+mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000"))
+mlflow.set_experiment("Animal Classification")
 
-def model_pipleine(X_train, X_test, y_train, y_test, feature_names):
+def model_pipleine(X_train, X_test, y_train, y_test):
+    with mlflow.start_run(run_name="animal_calssification") as run:
+        base_model = training(X_train, y_train)
 
-    lr_model = training(X_train, y_train)
+        accuracy_metric = evaluation(base_model, X_train, y_train, X_test, y_test)
+        mlflow.log_metric("base_model_accuracy", accuracy_metric)
 
-    accuracy_metric = evaluation(lr_model, X_train, y_train, X_test, y_test)
+        cv_score = validation(base_model, X_train, y_train)
+        mlflow.log_metric("base_model_cv_score", cv_score)
 
-    validation(lr_model, X_train, y_train)
+        best_model, best_params, accuracy_ht = tuning(base_model, X_train, X_test, y_train, y_test)
+        mlflow.log_metric("best_model_accuracy", accuracy_ht)
+        mlflow.log_param("best_params", str(best_params))
+        
+        print("✅ Register the best model")
+        model_registry(best_model, X_train)
+        
+        print("✅ the end")
 
-    best_model, best_params, accuracy_ht = tuning(lr_model, X_train, X_test, y_train, y_test)
-
-    print("✅ the end")
-
-    model_registry(best_model, accuracy_metric, accuracy_ht, best_params, feature_names)
 
 
 if __name__ == '__main__':
@@ -38,11 +45,5 @@ if __name__ == '__main__':
     y = df['class_name']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    feature_names = X_train.columns.tolist()
-    print(feature_names)
+    model_pipleine(X_train, X_test, y_train, y_test)
 
-    model_pipleine(X_train, X_test, y_train, y_test, feature_names)
-
-
-# Final data columns: ['hair', 'eggs', 'milk', 'predator', 'toothed', 'backbone', 'breathes', 'venomous', 'legs', 'tail', 'can_fly', 'can_swim', 'is_domestic_pet', 'animal_name', 'class_name', 'event_timestamp']        
-# Column names:  {(119, 16)}

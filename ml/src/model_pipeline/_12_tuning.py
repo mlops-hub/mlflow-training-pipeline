@@ -7,14 +7,18 @@ import os
 
 PROJECT_ROOT = os.getcwd()
 
+LOG_PATH = os.path.join(PROJECT_ROOT, "logs")
+os.makedirs(LOG_PATH, exist_ok=True)
+
 def tuning(base_model, X_train, X_test, y_train, y_test):
     # set parameters
     param_grid = {
-        'C': [0.01, 0.1, 1, 10, 100],
-        'solver': ['lbfgs', 'saga'],
-        'penalty': ['l2'],
-        'max_iter': [1000]
+        'model__C': [0.01, 0.1, 1, 10, 100],
+        'model__solver': ['lbfgs', 'saga'],
+        'model__penalty': ['l2'],
+        'model__max_iter': [1000]
     }
+
 
     # set cv
     strat_cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=42)
@@ -27,8 +31,6 @@ def tuning(base_model, X_train, X_test, y_train, y_test):
 
     # get best model and save in models/
     tuned_model = grid.best_estimator_
-    output_dir = os.path.join(PROJECT_ROOT, "models")
-    joblib.dump(tuned_model, f"{output_dir}/best_model.pkl")
 
     print(f'best params: {grid.best_params_}')
     print(f'best cv scores: {grid.best_score_ * 100}')
@@ -36,14 +38,9 @@ def tuning(base_model, X_train, X_test, y_train, y_test):
 
     # log other paramaeter values in logs/
     results = pd.DataFrame(grid.cv_results_)
-    print(results.head(3))
 
-    grid_results = results[['param_C', 'param_solver', 'mean_test_score', 'std_test_score']]
-
-    log_path = os.path.join(PROJECT_ROOT, "logs")
-    os.makedirs(log_path, exist_ok=True)
-
-    grid_results.to_csv(f'{log_path}/gridsearch_logs.csv', index=False)
+    grid_results = results[['param_model__C', 'param_model__solver', 'mean_test_score', 'std_test_score']]
+    grid_results.to_csv(f'{LOG_PATH}/gridsearch_logs.csv', index=False)
 
     # predict the output with tuned_model
     y_pred_ht = tuned_model.predict(X_test)

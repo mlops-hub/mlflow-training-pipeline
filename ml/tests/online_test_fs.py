@@ -7,7 +7,6 @@ from feast import FeatureStore
 
 FEAST_SERVER_URL = "http://localhost:5050"
 
-
 payload = {
     "feature_service": "animal_features_service",
     "entities": {
@@ -22,8 +21,7 @@ try:
         data=json.dumps(payload),
         headers=headers
     )
-    # print(response.json())
-    # response.raise_for_status() # Raise an exception for HTTP errors (4xx or 5xx)
+
     feature_names = response.json()['metadata']['feature_names']
     results = response.json()['results']
 

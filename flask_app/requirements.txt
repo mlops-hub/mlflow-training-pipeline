@@ -4,3 +4,6 @@ pandas
 python-dotenv
 joblib
 mlflow
+
+azure-identity
+azure-storage-blob

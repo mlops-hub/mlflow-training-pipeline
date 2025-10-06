@@ -9,11 +9,11 @@ from features import animal, animal_features_fv, animal_features_service
 
 load_dotenv()
 
-# FEAST_SERVER_HOST = os.environ.get("FEAST_SERVER_HOST", "localhost")
-# FEAST_SERVER_PORT= int(os.environ.get("FEAST_SERVER_PORT", "5050"))
+FEAST_SERVER_HOST = os.environ.get("FEAST_SERVER_HOST", "localhost")
+FEAST_SERVER_PORT= int(os.environ.get("FEAST_SERVER_PORT", "5050"))
 
-FEAST_SERVER_HOST = "localhost"
-FEAST_SERVER_PORT= 5050
+# FEAST_SERVER_HOST = "localhost"
+# FEAST_SERVER_PORT= 5050
 
 
 def main():

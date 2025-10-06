@@ -22,7 +22,11 @@ document.getElementById('animal_form').addEventListener('submit', e => {
             message.innerHTML = `New animal name. Find class-type based on features.`
             featuresSection.classList.remove('hidden')
         }
-        const showResult = document.getElementById('result')
+        // ✅ Unhide the result section
+        const resultContainer = document.getElementById('result')
+        resultContainer.classList.remove('hidden')
+
+        const showResult = document.getElementById('result-content')
         showResult.innerHTML = `
             <b>Prediction: </b>${result.prediction}
         `
@@ -35,7 +39,12 @@ document.getElementById('prediction_form').addEventListener('submit', (e) => {
     const formData = new FormData(e.target)
     const data = {}
     formData.forEach((value, key) => {
-        data[key] = Number(value)
+        console.log(key)
+        if(key === 'animal_name') {
+            data[key] = value.trim()
+        } else {
+            data[key] = Number(value)
+        }
     })
     console.log(data)
 
@@ -47,7 +56,11 @@ document.getElementById('prediction_form').addEventListener('submit', (e) => {
     .then(resp => resp.json())
     .then(result => {
         console.log(result)
-        const showResult = document.getElementById('result')
+        // ✅ Unhide the result section
+        const resultContainer = document.getElementById('result')
+        resultContainer.classList.remove('hidden')
+        
+        const showResult = document.getElementById('result-content')
         showResult.innerHTML = `
             <b>Prediction: </b>${result.prediction}
         `
