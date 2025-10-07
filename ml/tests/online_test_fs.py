@@ -4,8 +4,12 @@ import requests
 import json
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
-FEAST_SERVER_URL = "http://4.246.120.68:30800"
+load_dotenv()
+
+FEAST_SERVER_URL = os.environ.get("FEAST_SERVER_URL", "http://localhost:5050")
+print(FEAST_SERVER_URL)
 PROJECT_ROOT = Path(os.getcwd())
 
 # 
@@ -22,6 +26,9 @@ print(df['animal_name'].unique())
 # 
 from feast import FeatureStore
 fs = FeatureStore(repo_path="feature_store")
+
+# print('list: ', fs.list_feature_services())
+
 
 online_features = fs.get_online_features(
     features=["animal_preprocessed_features:backbone", "animal_preprocessed_features:milk"],

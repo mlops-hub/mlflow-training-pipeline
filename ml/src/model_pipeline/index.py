@@ -1,9 +1,9 @@
 from src.data_pipeline._05_feature_engg import get_data_from_feast
-from ml.src.model_pipeline._01_training import training
-from ml.src.model_pipeline._02_evaluation import evaluation
-from ml.src.model_pipeline._03_validation import validation
-from ml.src.model_pipeline._04_tuning import tuning
-from ml.src.model_pipeline._05_model_registry import model_registry
+from src.model_pipeline._01_training import training
+from src.model_pipeline._02_evaluation import evaluation
+from src.model_pipeline._03_validation import validation
+from src.model_pipeline._04_tuning import tuning
+from src.model_pipeline._05_model_registry import model_registry
 from sklearn.model_selection import train_test_split
 import os
 from pathlib import Path

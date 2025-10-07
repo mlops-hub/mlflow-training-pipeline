@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import datetime
 from feast import FeatureStore
-from feature_store.features import animal_features_fv
+from feature_repo.features import animal_features_fv
 from dotenv import load_dotenv
 
 load_dotenv()

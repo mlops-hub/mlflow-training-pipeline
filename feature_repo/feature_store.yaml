@@ -1,0 +1,24 @@
+project: mlops_project
+registry: 
+  registry_type: sql
+  path: postgresql+psycopg://feast:feast@4.246.120.68:30032/feast
+  cache_ttl_seconds: 60
+  sqlalchemy_config_kwargs:
+      echo: false
+      pool_pre_ping: true
+online_store:
+    type: redis
+    connection_string: "4.246.120.68:30379,username=default,password=changeMeVeryStrong,db=0"
+offline_store:
+    type: file
+
+entity_key_serialization_version: 2
+
+# project: mlops_animal_classification
+# registry: data/registry.db # Path to the Feast registry file, relative to feature_store/
+# provider: local
+# offline_store:
+#     type: file
+# online_store:
+#   type: redis
+#   connection_string: "4.246.120.68:30379,username=default,password=changeMeVeryStrong,db=0"

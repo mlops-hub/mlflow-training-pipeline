@@ -1,7 +1,7 @@
-from src.data_pipeline._01_ingestion import ingestion
-from src.data_pipeline._02_validation import check_schema, check_quality
-from src.data_pipeline._04_cleaning import cleaning
-from src.data_pipeline._05_feature_engg import feature_engg, prepare_data_for_feast
+from ml.src.data_pipeline._01_ingestion import ingestion
+from ml.src.data_pipeline._02_validation import check_schema, check_quality
+from ml.src.data_pipeline._04_cleaning import cleaning
+from ml.src.data_pipeline._05_feature_engg import feature_engg, prepare_data_for_feast
 
 
 def data_pipeline():
