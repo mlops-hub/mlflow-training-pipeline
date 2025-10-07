@@ -9,7 +9,7 @@ load_dotenv()
 MLFLOW_TRACKING_URI = os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000")
 MODEL_VERSION = os.environ.get("MODEL_VERSION", "1")
 MODEL_NAME = os.environ.get("MODEL_NAME", "Animal Classifier")
-KSERVE_PORT = os.environ.get("KSERVE_PORT", 7070)
+KSERVE_PORT = int(os.environ.get("KSERVE_PORT", 7070))
 
 
 class AnimalClassPrediction(Model):

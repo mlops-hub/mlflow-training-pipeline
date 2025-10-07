@@ -5,6 +5,8 @@ from pandera import Column, Check
 from pandera.dtypes import Int
 
 PROJECT_ROOT = os.getcwd()
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "logs/validation")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # 1.Define the schema
 class AnimalSchema (pa.DataFrameModel):
@@ -30,40 +32,27 @@ class AnimalSchema (pa.DataFrameModel):
 
 
 def check_schema(df):
-    """Initial schema-level validation"""
     try:
         validated_df = AnimalSchema.validate(df, lazy=True) # lazy=True to catch all errors
         print(validated_df.head(3))
         print("✅ Data validation successful!")
         return validated_df
-        
     except pa.errors.SchemaErrors as err:
         print("Data validation failed:")
         print(err.failure_cases)
-
         # log error
-        output_dir = os.path.join(PROJECT_ROOT, "logs/validation")
-        os.makedirs(output_dir, exist_ok=True)
-        
-        err.failure_cases.to_csv(f"{output_dir}/error_df.csv", index=False)
+        err.failure_cases.to_csv(f"{OUTPUT_DIR}/error_df.csv", index=False)
         return None
 
-
-
 # quality / bussiness validation
-
 def check_quality(df: pd.DataFrame) -> pd.DataFrame | None:
-    """ Post-cleaning validation for qulaity rules """
     errors = []
-
     if df.duplicated().sum():
         errors.append("Duplicate rows found")
     if (df["legs"] < 0).any():
         errors.append("Negative values found in 'legs' column.")
-
     if df["class_type"].nunique() < 2:
         errors.append("Only one class_type present (bad for classification).")
-
     if df.isnull().sum().sum() > 0:
         errors.append("Null values still present after cleaning.")
 
@@ -73,15 +62,11 @@ def check_quality(df: pd.DataFrame) -> pd.DataFrame | None:
     print(f"Data types:\n{df.dtypes}")
 
     if errors:
-        output_dir = os.path.join(PROJECT_ROOT, "logs/validation")
-        os.makedirs(output_dir, exist_ok=True)
-
-        error_path = os.path.join(output_dir, "quality_errors.txt")
+        error_path = os.path.join(OUTPUT_DIR, "quality_errors.txt")
         with open(error_path, "w") as f:
             f.write("\n".join(errors))
         print(f"⚠️ Errors saved to: {error_path}")
         return None
-
     else:
         print("✅ Data Quality is validated. Proceed to next steps.")
         return df

@@ -1,6 +1,8 @@
 import os
 
 PROJECT_ROOT = os.getcwd()
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data/cleaned")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def cleaning(eda_df):
     # 1. Remove duplicate rows
@@ -53,10 +55,6 @@ def cleaning(eda_df):
         if col in eda_df.columns:
             eda_df[col] = eda_df[col].astype("int64")
 
-    # 6. Save cleaned dataset
-    output_dir = os.path.join(PROJECT_ROOT, "data/cleaned")
-    os.makedirs(output_dir, exist_ok=True)
-
-    eda_df.to_csv(f"{output_dir}/zoo_dataset_cleaned.csv", index=False)
+    # 4. Save cleaned dataset
+    eda_df.to_csv(f"{OUTPUT_DIR}/zoo_dataset_cleaned.csv", index=False)
     return eda_df
-

@@ -1,5 +1,5 @@
 from sklearn.metrics import accuracy_score
-\
+
 def evaluation(model, X_train, y_train, X_test, y_test):
     # predict
     y_pred = model.predict(X_test)
