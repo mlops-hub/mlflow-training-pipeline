@@ -7,10 +7,10 @@ from feature_store.features import animal_features_fv
 load_dotenv()
 
 PROJECT_ROOT = os.getcwd()
-feast_repo_path = os.path.join(PROJECT_ROOT, "feature_store")
+feast_repo_path = os.path.join(PROJECT_ROOT, "feature_repo")
 print('repo-path: ', feast_repo_path)
 
-preprocessed_df_path = os.path.join(PROJECT_ROOT, 'feature_store/data/preprocessed_data.parquet')
+preprocessed_df_path = os.path.join(PROJECT_ROOT, 'feature_repo/data/preprocessed_data.parquet')
 
 # import feast feature
 MODEL_INPUT_FEATURE_ORDER = sorted([

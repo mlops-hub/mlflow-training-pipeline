@@ -1,9 +1,9 @@
-from src.data_pipeline._05_feature_engg import get_data_from_feast
-from src.model_pipeline._01_training import training
-from src.model_pipeline._02_evaluation import evaluation
-from src.model_pipeline._03_validation import validation
-from src.model_pipeline._04_tuning import tuning
-from src.model_pipeline._05_model_registry import model_registry
+from ml.src.data_pipeline._05_feature_engg import get_data_from_feast
+from ml.src.model_pipeline._01_training import training
+from ml.src.model_pipeline._02_evaluation import evaluation
+from ml.src.model_pipeline._03_validation import validation
+from ml.src.model_pipeline._04_tuning import tuning
+from ml.src.model_pipeline._05_model_registry import model_registry
 from sklearn.model_selection import train_test_split
 import os
 from pathlib import Path
@@ -12,10 +12,19 @@ import mlflow
 
 PROJECT_ROOT = Path(os.getcwd())
 mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000"))
-mlflow.set_experiment("Animal Classification")
+mlflow.set_experiment(os.environ.get("MLFLOW_EXPERIMENT_NAME", "Animal Classifier Dev"))
+
+# Ensure no active runs
+while mlflow.active_run() is not None:
+    mlflow.end_run()
+
+# Optional: clean up env variable
+os.environ.pop("MLFLOW_RUN_ID", None)
 
 def model_pipleine(X_train, X_test, y_train, y_test):
-    with mlflow.start_run(run_name="animal_calssification") as run:
+    with mlflow.start_run(run_name="animal_classifier_dev") as run:
+        print("Run ID:", run.info.run_id)
+
         base_model = training(X_train, y_train)
 
         accuracy_metric = evaluation(base_model, X_train, y_train, X_test, y_test)
@@ -37,7 +46,7 @@ def model_pipleine(X_train, X_test, y_train, y_test):
 
 if __name__ == '__main__':
     # get training data
-    df, feature_names = get_data_from_feast()
+    df = get_data_from_feast()
     print(df)
 
     # split

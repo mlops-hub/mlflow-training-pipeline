@@ -2,19 +2,19 @@ import os
 import pandas as pd
 import datetime
 from feast import FeatureStore
-from feature_repo.features import animal_features_fv
+from feature_repo.features import animal_feature_fv
 from dotenv import load_dotenv
 
 load_dotenv()
 
 PROJECT_ROOT = os.getcwd()
-SAVE_FEATURE_DF = os.path.join(PROJECT_ROOT, "data/feature_engg")
+SAVE_FEATURE_DF = os.path.join(PROJECT_ROOT, "ml/data/feature_engg")
 os.makedirs(SAVE_FEATURE_DF, exist_ok=True)
     
-OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data/prepared/prepared_df.csv")
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "ml/data/prepared/prepared_df.csv")
 os.makedirs(os.path.dirname(OUTPUT_DIR), exist_ok=True)    
 
-OUTPUT_PARQUET_PATH = os.path.join(PROJECT_ROOT, 'feature_store/data/preprocessed_data.parquet')
+OUTPUT_PARQUET_PATH = os.path.join(PROJECT_ROOT, 'feature_repo/data/preprocessed_data.parquet')
 os.makedirs(os.path.dirname(OUTPUT_PARQUET_PATH), exist_ok=True)    
 
 
@@ -40,19 +40,24 @@ def prepare_data_for_feast(df):
     print("Data preparation complete and saved successfully.")
     print(f"Final data columns: {final_df.columns.tolist()}")
     print("Column names: ", {final_df.shape})
+    # test the parquet file
+    df = pd.read_parquet(OUTPUT_PARQUET_PATH)
+    # Check the row for 'bear'
+    bear_data = df[df['animal_name'] == 'bear']
+    print('bear-data: ', bear_data.head())
+
 
 # get features from feast
 def get_data_from_feast():
-    feast_repo_path = os.path.join(PROJECT_ROOT, "feature_store")
+    feast_repo_path = os.path.join(PROJECT_ROOT, "feature_repo")
     # import feast feature
     MODEL_INPUT_FEATURE_ORDER = sorted([
-        field.name for field in animal_features_fv.schema
+        field.name for field in animal_feature_fv.schema
         if field.name not in ["animal_name", "event_timestamp", "created_timestamp"]
     ])
-    print('model sorted: ', MODEL_INPUT_FEATURE_ORDER)
 
     fs = FeatureStore(repo_path=feast_repo_path)
-    preprocessed_df_path = os.path.join(PROJECT_ROOT, 'feature_store/data/preprocessed_data.parquet')
+    preprocessed_df_path = os.path.join(PROJECT_ROOT, 'feature_repo/data/preprocessed_data.parquet')
 
     if not os.path.exists(preprocessed_df_path):
         print(f"Preprocessed data not found at: {preprocessed_df_path}")
@@ -60,22 +65,14 @@ def get_data_from_feast():
     
     entity_df = pd.read_parquet(preprocessed_df_path, columns=['animal_name', 'event_timestamp'])
     all_features_to_fetch_from_feast = [
-        f"animal_preprocessed_features:{feature}" 
+        f"animal_feature_fv:{feature}" 
         for feature in MODEL_INPUT_FEATURE_ORDER
     ]
 
-    print("Fetching historical features from Feast...")
     training_df = fs.get_historical_features(
         entity_df=entity_df,
         features=all_features_to_fetch_from_feast
     ).to_df()
     print("training_df: ", training_df)
 
-    columns_to_drop_from_training_df = [
-        col for col in training_df.columns
-        if col.startswith(('event_timestamp', 'created_timestamp'))
-    ]
-    model_features = training_df.drop(columns_to_drop_from_training_df, axis=1)
-    print(f"Training data columns: {training_df.columns.tolist()}")
-    print(f"Model Features columns: {model_features.columns.tolist()}")
-    return training_df, model_features
+    return training_df

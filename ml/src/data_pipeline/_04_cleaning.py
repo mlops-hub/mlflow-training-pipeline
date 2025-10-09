@@ -1,7 +1,7 @@
 import os
 
 PROJECT_ROOT = os.getcwd()
-OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data/cleaned")
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "ml/data/cleaned")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def cleaning(eda_df):

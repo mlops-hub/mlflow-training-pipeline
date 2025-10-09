@@ -5,16 +5,18 @@ matplotlib
 seaborn
 pandera
 
-feast==0.43.0
-feast[redis]
+feast
+feast[azure, redis]
+feast[postgres]
 psycopg2-binary
-# psycopg[binary]
-mlflow==3.1.0
+
+mlflow
 
 flask
 flask-cors
-fastapi
 pydantic
 
 azure-identity
 azure-storage-blob
+
+kserve

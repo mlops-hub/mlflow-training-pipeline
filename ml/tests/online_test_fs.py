@@ -8,40 +8,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+PROJECT_ROOT = Path(os.getcwd()).parent.parent
+print(PROJECT_ROOT)
+
 FEAST_SERVER_URL = os.environ.get("FEAST_SERVER_URL", "http://localhost:5050")
 print(FEAST_SERVER_URL)
-PROJECT_ROOT = Path(os.getcwd())
 
-# 
-import pandas as pd
+OUTPUT_PARQUET_PATH = os.path.join(PROJECT_ROOT, 'feature_repo/data/preprocessed_data.parquet')
+os.makedirs(os.path.dirname(OUTPUT_PARQUET_PATH), exist_ok=True)  
 
-data_path = os.path.join(PROJECT_ROOT, "feature_store/data/preprocessed_data.parquet")
-print('data-path: ', data_path)
-
-df = pd.read_parquet(data_path)
-print(df['event_timestamp'].min(), df['event_timestamp'].max())
-print(df['animal_name'].unique())
+df = pd.read_parquet(OUTPUT_PARQUET_PATH)
+# Check the row for 'bear'
+bear_data = df[df['animal_name'] == 'bear']
+print('bear-data: ', bear_data.head())
 
 
-# 
-from feast import FeatureStore
-fs = FeatureStore(repo_path="feature_store")
-
-# print('list: ', fs.list_feature_services())
-
-
-online_features = fs.get_online_features(
-    features=["animal_preprocessed_features:backbone", "animal_preprocessed_features:milk"],
-    entity_rows=[{"animal_name": "bear"}]  # or "Bear"
-).to_df()
-
-print(online_features)
-
-# 
 payload = {
-    "feature_service": "animal_features_service",
+    "feature_service": "animal_feature_service",
     "entities": {
-        "animal_name": ['bear']
+        "animal_name": ["kangaroo"]
     }
 }
 headers = {"Content-Type": "application/json"}
@@ -55,6 +40,7 @@ try:
 
     feature_names = response.json()['metadata']['feature_names']
     results = response.json()['results']
+    print(results)
 
     values = [r['values'][0] for r in results]
 

@@ -67,31 +67,36 @@ The main dataset used is [zoo.csv](./datasets/raw/zoo.csv) which contains featur
 ## Project Structure
 
 ```bash
-classifier_model
-|__ venv/                              # virtual env
-|__ datasets/
-    |__ raw/                           # original datasets
-        |__ zoo_data.csv               
-        |__ class.csv                  
-    |__ */                             # datasets created when you run code
-|__ feature_store/
-    |__ feature_names.pkl              # save feature_names for testing
-|__ utility/
-    |__ scaler.pkl                     # save scaler function for testing
-|__ models/                            # save models here in .pkl
-    |__ base_model.pkl 
-    |__ best_model.pkl                
-|__ logs/*                             # logs for hyperparamter tuning values
-|__ src/
-  |__ data_piepline/                   # data_pipeline folder
-      |__ *.py
-  |__ model_pipeline/                  # model_pipeline folder
-      |__ *.py
-  |__ predict/                         # to test model
-    |__ inference_test.py
-|__ requirements.txt                   # install dependency pacakges
-|__ README.md     
-                 
+mlflow-training-pipeline
+    |__ venv/                              # virtual env
+    |__ requirements.txt                   # install dependency pacakges
+    |__ README.md    
+    |__ feature_store/
+        |__ feature_names.pkl              # save feature_names for testing|__ feature_store/
+        |__ features.py                    # setup registry in feast
+        |__ data/                          # save preprocessd.parquet file
+
+    |__ flask-app/
+        |__ app.py
+        |__ static/
+        |__ templates/
+
+    |__ ml/
+        |__ data/
+            |__ raw/                       # original datasets
+                |__ zoo_data.csv               
+                |__ class.csv                  
+            |__ */                         # datasets created when you run code            
+        |__ logs/*                         # logs for hyperparamter tuning values
+        |__ notebooks/                     # data ingestion, eda, experiment with different models, etc..
+        |__ src/
+            |__ data_piepline/*.py         # data_pipeline folder
+            |__ model_pipeline/*.py        # model_pipeline folder
+        |__ kserve/                        # kserve setup
+            |__ pediction.py           
+        |__ tests/                       # to test model
+            |__ inference_test.py
+            |__ *.py
 ```
 
 

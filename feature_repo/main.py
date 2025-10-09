@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 
 # Import all definitions from your features module
-from features import animal, animal_features_fv, animal_features_service
+from features import animal_entity, animal_feature_fv, animal_feature_service
 
 load_dotenv()
 
@@ -23,9 +23,9 @@ def main():
     print("Feature Views:", store.list_feature_views())
 
     store.apply([
-        animal,
-        animal_features_fv,
-        animal_features_service,
+        animal_entity,
+        animal_feature_fv,
+        animal_feature_service,
     ])
     store.materialize_incremental(end_date=datetime.now())
     start_server(

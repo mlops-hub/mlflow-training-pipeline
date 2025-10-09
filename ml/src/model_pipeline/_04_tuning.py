@@ -7,7 +7,7 @@ import os
 
 PROJECT_ROOT = os.getcwd()
 
-LOG_PATH = os.path.join(PROJECT_ROOT, "logs")
+LOG_PATH = os.path.join(PROJECT_ROOT, "ml/logs")
 os.makedirs(LOG_PATH, exist_ok=True)
 
 def tuning(base_model, X_train, X_test, y_train, y_test):

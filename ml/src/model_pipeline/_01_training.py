@@ -1,9 +1,7 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-import os
 
-PROJECT_ROOT = os.getcwd()
 
 def training(X_train, y_train):
     pipeline = Pipeline([
@@ -11,7 +9,6 @@ def training(X_train, y_train):
         ('model', LogisticRegression())
     ])
     
-    # model.fit(X_train, y_train)
     pipeline.fit(X_train, y_train)
     print(pipeline)
 

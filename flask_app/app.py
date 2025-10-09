@@ -37,7 +37,7 @@ mlflow.set_tracking_uri(MLFLOW_URL)
 # features from feast
 def get_features_from_feast(animal_name):
     payload = {
-        "feature_service": "animal_features_service",
+        "feature_service": "animal_feature_service",
         "entities": {
             "animal_name": [animal_name]
         }

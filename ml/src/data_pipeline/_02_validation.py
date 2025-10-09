@@ -5,7 +5,7 @@ from pandera import Column, Check
 from pandera.dtypes import Int
 
 PROJECT_ROOT = os.getcwd()
-OUTPUT_DIR = os.path.join(PROJECT_ROOT, "logs/validation")
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "ml/logs/validation")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # 1.Define the schema

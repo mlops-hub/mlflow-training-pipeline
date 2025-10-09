@@ -4,7 +4,6 @@ import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 from mlflow.models import infer_signature
 
-PROJECT_ROOT = os.getcwd()
 
 def model_registry(best_model, X_train): 
     client = MlflowClient()

@@ -1,1 +1,6 @@
 rough.md
+venv/
+.env
+
+feature_repo/__pycache__
+feature_repo/data/
