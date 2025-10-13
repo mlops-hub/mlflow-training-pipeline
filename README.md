@@ -21,6 +21,7 @@
     - [Create Virtual Environment](#step-2-create-virtual-environment)
     - [Install Dependencies](#step-3-install-dependencies)
     - [Training the Model](#step-4-training-the-model)
+    - [Deploy model in KServe local](#step)
     - [Testing/Prediction](#step-5-testingprediction)
 - [Contribution](#contribution)
 - [References](#references)
@@ -127,21 +128,15 @@ cd mlflow-training-pipeline
 
 #### Step-2: Create Virtual Environment
 
-`ml/` folder is where all model and backend related files stored.
-
-##### Windows
+**Windows**
 
 ```bash
-cd ml
-
 python -m venv venv
 venv\Scripts\activate
 ```
-##### Mac and Linux
+**Mac and Linux**
 
 ```bash
-cd ml
-
 python3 -m venv venv
 source venv/bin/activate
 ```
@@ -157,6 +152,8 @@ pip install -r requirements.txt
 **1. Run notebook/ingestion**
 
 ```bash
+cd mlflow-training-pipeline
+cd ml
 cd notebooks/ingestion
 ```
 
@@ -166,69 +163,123 @@ cd notebooks/ingestion
 **2. Run data-pipeline code**
 
 ```bash
-python -m src.data_pipeline.index
+cd mlflow-training-pipeline
+python -m ml.src.data_pipeline.index
 
 ```
 
 **3. Run feast to store preprocessed-dataset**
 
-On new terminal, go to `feature_store/` floder 
-```bash
-cd feature_store
-```
+On new terminal, go to `feature_repo/` folder.
 
 ```bash
-If deployed in Cloud.. Use azure/aws credentials here...
+cd mlflow-training-pipeline
+cd feature_repo
 ```
 
 **For bash terminal**
+
 ```bash
 export POSTGRES_USER=<postgres-name>
 export POSTGRES_PASSWORD=<postgres-password>
 export POSTGRES_HOST=<postgres-host>
 export POSTGRES_PORT=<postgres-port>
 export POSTGRES_DB=<postgres-db-name>
-
 export REDIS_HOST=<redis-host>
 export REDIS_PORT=<redis-port>
+export REDIS_PASSWORD=<redis-password>
 ```
 
 ```bash
 feast apply
 
-feast materialize-incremental 2025-12-31T23:59:59
-
-python main.py
-
+# feast materialize <start-date> <end-date>
+feast materialize 2025-06-01T00:00:00 2025-10-10T23:59:59
 ```
 
-**4. Run Mlflow**
+To run feast locally,
 
 ```bash
-mlflow server
+python main.py
+```
+
+**4. Run MLflow**
+
+If Mlflow is running in cloud. Skip this step.
+
+```bash
+cd mlfow-training-pipeline
+mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlruns --host 127.0.0.1 --port 5000
 ```
 
 
 **5. Run model-pipeline code**
 
-```bash
-python -m src.model_pipeline.index
-
-```
-
-
-#### Step-4: Testing/Prediction
-
-Run [`inference_test.py`](./src/tests/inference_test.py) to make predictions. If 'animal' is not found, you will be prompted to enter animal features, and the model will predict the class.
+Model pipeline gets data from feast, use feast credentials.
 
 ```bash
-cd src/predict
-python inference_test.py
+export POSTGRES_USER=<postgres-name>
+export POSTGRES_PASSWORD=<postgres-password>
+export POSTGRES_HOST=<postgres-host>
+export POSTGRES_PORT=<postgres-port>
+export POSTGRES_DB=<postgres-db-name>
+export REDIS_HOST=<redis-host>
+export REDIS_PORT=<redis-port>
+export REDIS_PASSWORD=<redis-password>
 ```
 
-#### Run Frotnend
+If mlflow is running in cloud (aws/azure), use aws/azure credentials.
 
-At [flask-app](./flask_app/)
+```bash
+export AZURE_STORAGE_ACCOUNT_NAME=<account-name>
+export AZURE_STORAGE_ACCESS_KEY=<access-key>
+
+# powershell
+$env:AZURE_STORAGE_ACCOUNT_NAME=<account-name>
+$env:AZURE_STORAGE_ACCESS_KEY=<access-key>
+```
+
+```bash
+python -m ml.src.model_pipeline.index
+```
+
+#### step-5: Deploy Model in KServe locally
+
+```bash
+cd ml/kserve
+python prediction.py
+```
+
+#### Step-6: Testing/Prediction
+
+Run [`inference_test.py`](ml/tests/inference_test.py) to make predictions. If 'animal' is not found, you will be prompted to enter animal features, and the model will predict the class.
+
+```bash
+cd mlflow-training-pipeline
+python ml.tests.inference_test
+```
+
+## Run Frontend
+
+At [flask-app](./flask_app/) had separate virtual environment for frontend.
+
+```bash
+cd flask_app
+
+# for windows
+python -m venv venv
+venv/Scripts/activate
+
+# for macOS and linux
+python3 -m venv venv
+source venv/Scripts/activate
+```
+
+Then run the frontend
+
+```bash
+python app.py
+```
 
 ## Contribution
 
@@ -237,5 +288,4 @@ Please read our [Contributing Guidelines](CONTRIBUTION.md) before submitting pul
 
 ## License
 This project is under [MIT Licence](LICENCE) support.
-
 

@@ -5,34 +5,18 @@ from dotenv import load_dotenv
 import requests
 import pandas as pd
 import mlflow
-import joblib
 import json
 
 
 load_dotenv()
 
-FEAST_SERVER_URL = os.environ.get("FEAST_SERVER_URL", "http://localhost:5050") # Or the load balancer URL if on K8s
+FEAST_SERVER_URL = os.environ.get("FEAST_SERVER_URL", "http://localhost:5050") 
 KSERVE_URL = os.environ.get("KSERVE_URL", "http://localhost:7070/v1/models/mlops_animal_classifer:predict")
-
-MLFLOW_URL = os.environ.get("MLFLOW_URL", "http://localhost:5000") # Or the load balancer URL if on K8s
-MLFLOW_RUN_ID = os.environ.get("MLFLOW_RUN_ID", "185c5c005a2b4d32a3d6cbc281ec7add") # Or the load balancer URL if on K8s
-print(MLFLOW_RUN_ID)
-print('feast-url', FEAST_SERVER_URL)
+MLFLOW_URL = os.environ.get("MLFLOW_URL", "http://localhost:5000")
+MLFLOW_RUN_ID = os.environ.get("MLFLOW_RUN_ID", "185c5c005a2b4d32a3d6cbc281ec7add")
 
 # mlflow
 mlflow.set_tracking_uri(MLFLOW_URL)
-
-# download artifacts
-# scaler_path = mlflow.artifacts.download_artifacts(artifact_uri=f"runs:/{MLFLOW_RUN_ID}/preprocessor/scaler.pkl")
-# scaler = joblib.load(scaler_path)
-
-# print("Scaler features:", scaler.feature_names_in_)
-# scaler_features = scaler.feature_names_in_
-
-# features_path = mlflow.artifacts.download_artifacts(artifact_uri=f"runs:/{MLFLOW_RUN_ID}/preprocessor/features_names.pkl")
-# feature_names = joblib.load(features_path)
-# print('feature-names: ', feature_names)
-
 
 # features from feast
 def get_features_from_feast(animal_name):
