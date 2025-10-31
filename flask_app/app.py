@@ -6,6 +6,9 @@ import requests
 import pandas as pd
 import mlflow
 import json
+# 
+from monitoring.scripts.save_logs import init_db, log_prediction
+from monitoring.scripts.save_live_data import init_live_db, log_live_data
 
 
 load_dotenv()
@@ -13,7 +16,7 @@ load_dotenv()
 FEAST_SERVER_URL = os.environ.get("FEAST_SERVER_URL", "http://localhost:5050") 
 KSERVE_URL = os.environ.get("KSERVE_URL", "http://localhost:7070/v1/models/mlops_animal_classifer:predict")
 MLFLOW_URL = os.environ.get("MLFLOW_URL", "http://localhost:5000")
-MLFLOW_RUN_ID = os.environ.get("MLFLOW_RUN_ID", "185c5c005a2b4d32a3d6cbc281ec7add")
+MLFLOW_RUN_ID = os.environ.get("MLFLOW_RUN_ID", "53485df8413c4d2b8eafb31e97c904ba")
 
 # mlflow
 mlflow.set_tracking_uri(MLFLOW_URL)
@@ -54,6 +57,11 @@ app = Flask(__name__)
 
 CORS(app)
 
+# init db
+init_db()
+init_live_db()
+
+
 
 # home page
 @app.route("/", methods=['GET'])
@@ -78,21 +86,29 @@ def predict():
         else:
             print('found df')
     
-        input_df = df.reindex(columns=feature_names)
-        print('idf: ', input_df)
+        original_df = df.reindex(columns=feature_names)
+        print('og: ', original_df)
 
         # Drop unused columns if still present
-        if "animal_name" in input_df.columns:
-            input_df = input_df.drop(columns=["animal_name"])
-        if "class_name" in input_df.columns:
-            input_df = input_df.drop(columns=["class_name"])
-
+        input_df = original_df.drop(columns=[c for c in ["animal_name", "class_name"] if c in original_df.columns])
+        print('input-df: ', input_df)
+         
         # Send to KServe model running locally
-        print(KSERVE_URL)
         response = requests.post(KSERVE_URL, json={"instances": input_df.to_dict(orient="records")})        
         print('✅😷 result: ', response.json())
 
         prediction_result = response.json()["prediction"][0]
+        confidence = response.json()["confidence"][0]
+
+        # log in db
+        log_prediction(
+            input_data=user_data['userInput'],
+            prediction=prediction_result,
+            confidence=confidence
+        )
+        feature_row = original_df.iloc[0].to_dict()
+        print('feature_row): ', feature_row)
+        log_live_data(user_data['userInput'], feature_row, prediction_result)
 
         payload = { "prediction": prediction_result }
         return payload
@@ -108,29 +124,35 @@ def predict():
 @app.route("/predict_features", methods=['POST'])
 def predict_features():
     user_data = request.get_json()
-    print('data: ', user_data)
 
     try:
         _, feature_names = get_features_from_feast(user_data['animal_name'])
         feature_names = sorted(feature_names)
+        print('_df: ', _)
         
         df = pd.DataFrame([user_data])
         print('df: ', df)
 
-        input_df = df.reindex(columns=feature_names)
-        print('idf: ', input_df)
+        original_df = df.reindex(columns=feature_names)
+        print('idf: ', original_df)
 
         # Drop unused columns if still present
-        if "animal_name" in input_df.columns:
-            input_df = input_df.drop(columns=["animal_name"])
-        if "class_name" in input_df.columns:
-            input_df = input_df.drop(columns=["class_name"])
+        input_df = original_df.drop(columns=[c for c in ["animal_name", "class_name"] if c in original_df.columns])
+        print('input-df: ', input_df)
 
-        print(KSERVE_URL)
         response = requests.post(KSERVE_URL, json={"instances": input_df.to_dict(orient="records")})        
         print('✅😷 result: ', response.json())
 
         prediction_result = response.json()["prediction"][0]
+
+        # log in db
+        log_prediction(
+            input_data=user_data['animal_name'],
+            prediction=prediction_result,
+            confidence=None
+        )
+        feature_row = original_df.iloc[0].to_dict()
+        log_live_data(user_data['animal_name'], feature_row, prediction_result)
 
         payload = { "prediction": prediction_result }
         return payload

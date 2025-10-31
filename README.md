@@ -69,35 +69,37 @@ The main dataset used is [zoo.csv](./datasets/raw/zoo.csv) which contains featur
 
 ```bash
 mlflow-training-pipeline
-    |__ venv/                              # virtual env
     |__ requirements.txt                   # install dependency pacakges
-    |__ README.md    
     |__ feature_store/
         |__ feature_names.pkl              # save feature_names for testing|__ feature_store/
         |__ features.py                    # setup registry in feast
         |__ data/                          # save preprocessd.parquet file
-
     |__ flask-app/
         |__ app.py
-        |__ static/
-        |__ templates/
-
+        |__ static/*
+        |__ templates/*
+        |__ .env
     |__ ml/
         |__ data/
-            |__ raw/                       # original datasets
-                |__ zoo_data.csv               
-                |__ class.csv                  
-            |__ */                         # datasets created when you run code            
-        |__ logs/*                         # logs for hyperparamter tuning values
+            |__ raw/*                      # original datasets              
+            |__ /*                         # datasets created when you run code            
+        |__ logs/                          # logs for hyperparamter tuning values
         |__ notebooks/                     # data ingestion, eda, experiment with different models, etc..
         |__ src/
             |__ data_piepline/*.py         # data_pipeline folder
             |__ model_pipeline/*.py        # model_pipeline folder
         |__ kserve/                        # kserve setup
             |__ pediction.py           
-        |__ tests/                       # to test model
-            |__ inference_test.py
+        |__ tests/                         # to test model
+    |__ monitoring/                        # monitoring scripts
+        |__ scripts/*
+        |__ db_logs/*                      
+        |__ inference_logger.db
+        |__ live_data.db
+        |__ evidently_monitor/
+            |__ index.py
             |__ *.py
+
 ```
 
 
@@ -108,6 +110,8 @@ mlflow-training-pipeline
 - **Visual Charts**: matplotlib, seaborn
 - **data validation**: pandera
 - **Save model**: joblib
+- **DEployment**: kserve
+- **Metrics**: prometheus-client
 
 
 ## Model

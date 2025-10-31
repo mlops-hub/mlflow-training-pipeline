@@ -8,7 +8,8 @@ from sklearn.model_selection import train_test_split
 import os
 from pathlib import Path
 import mlflow
-
+# 
+from monitoring.scripts.save_reference_data import save_reference_data
 
 PROJECT_ROOT = Path(os.getcwd())
 mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000"))
@@ -21,7 +22,7 @@ while mlflow.active_run() is not None:
 # Optional: clean up env variable
 os.environ.pop("MLFLOW_RUN_ID", None)
 
-def model_pipleine(X_train, X_test, y_train, y_test):
+def model_pipleine(X_train, X_test, y_train, y_test, df_ref):
     with mlflow.start_run(run_name="animal_classifier_dev") as run:
         print("Run ID:", run.info.run_id)
 
@@ -39,6 +40,12 @@ def model_pipleine(X_train, X_test, y_train, y_test):
         
         print("✅ Register the best model")
         model_registry(best_model, X_train)
+
+        # save the reference dataset
+        X_ref = df_ref.drop(columns=['animal_name', 'class_name', 'event_timestamp'])
+        ref_pred = best_model.predict(X_ref)
+        df_ref['prediction'] = ref_pred
+        save_reference_data(df_ref)
         
         print("✅ the end")
 
@@ -48,11 +55,12 @@ if __name__ == '__main__':
     # get training data
     df = get_data_from_feast()
     print(df)
+    df_ref = df.copy()
 
     # split
     X = df.drop(columns=['animal_name', 'class_name', 'event_timestamp'])
     y = df['class_name']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    model_pipleine(X_train, X_test, y_train, y_test)
+    model_pipleine(X_train, X_test, y_train, y_test, df_ref)
 

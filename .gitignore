@@ -2,5 +2,13 @@ rough.md
 venv/
 .env
 
-feature_repo/__pycache__
 feature_repo/data/
+*/.ex.feature_store.yaml
+
+*/__pycache__
+*/*/__pycache__
+*/db_logs
+*/reports
+
+*/mlruns
+*/mlflow.db

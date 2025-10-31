@@ -20,3 +20,6 @@ azure-identity
 azure-storage-blob
 
 kserve
+prometheus-client
+
+evidently
