@@ -10,19 +10,27 @@
 
 <hr />
 
-
 ## Table of Contents
 
 - [Overview](#overview)
 - [Datasets](#datasets)
 - [Project Structure](#project-structure)
+- [Libraries & Tools](#libraries-and-tools)
+- [Model](#model)
 - [Setup & Installation](#setup--installation)
     - [Clone repo](#step-1-clone-the-repository)
     - [Create Virtual Environment](#step-2-create-virtual-environment)
     - [Install Dependencies](#step-3-install-dependencies)
-    - [Training the Model](#step-4-training-the-model)
-    - [Deploy model in KServe local](#step)
-    - [Testing/Prediction](#step-5-testingprediction)
+    - [Training the Model Pipeline](#step-4-run-the-model-workflow-step-by-step)
+        - [Notebook Ingestion](#1-run-notebookingestion)
+        - [Run Data Pipeline](#2-run-data-pipeline)
+        - [Run Feast Server](#3-run-feast)
+        - [Run MLflow](#4-run-mlflow)
+        - [Run Model Pipeline](#5-run-model-pipeline)
+    - [Deploy model in KServe local](#step-5-deploy-model-in-kserve-locally)
+    - [Testing/Prediction](#step-6-testingprediction)
+    - [Execute Frontend](#step-7-run-frontend)
+- [MLOPs Monitoring](#mlops-monitoring)
 - [Contribution](#contribution)
 - [References](#references)
 
@@ -116,21 +124,22 @@ mlflow-training-pipeline
 
 ## Model
 
-- **Algorithm**: Logistic Regression 
+- **ML Algorithm**: Logistic Regression 
 - **Evaluation**: Accuracy, classification report, confusion matrix
 - **Output**: Predicted animal class
+- **Metrics**: Prometheus, Evidently AI (data drift, prediction drift, data quality, classifcation summary)
 
 
 ## Setup & Installation
 
-#### Step-1: Clone the repository
+### Step-1: Clone the repository
 
 ```bash
 git clone https://github.com/mlops-hub/classifier-model.git
 cd mlflow-training-pipeline
 ```
 
-#### Step-2: Create Virtual Environment
+### Step-2: Create Virtual Environment
 
 **Windows**
 
@@ -138,6 +147,7 @@ cd mlflow-training-pipeline
 python -m venv venv
 venv\Scripts\activate
 ```
+
 **Mac and Linux**
 
 ```bash
@@ -145,15 +155,15 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-#### Step-3: Install Dependencies
+### Step-3: Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-#### Step-4: Run the Model Workflow Step-by-Step
+### Step-4: Run the Model Workflow Step-by-Step
 
-**1. Run notebook/ingestion**
+#### 1. Run notebook/ingestion
 
 ```bash
 cd mlflow-training-pipeline
@@ -162,26 +172,26 @@ cd notebooks/ingestion
 ```
 
 - Click 'run all' in tab
-- This will load merged dataset at `data/indestion/*.csv`. This is dataset used for ml pipelines.
+- It saves merged dataset at [`data/ingestion/*.csv`](./ml/data/ingestion//merged_df.csv). This is dataset used for ml pipelines.
 
-**2. Run data-pipeline code**
+
+#### 2. Run Data Pipeline
 
 ```bash
 cd mlflow-training-pipeline
 python -m ml.src.data_pipeline.index
-
 ```
 
-**3. Run feast to store preprocessed-dataset**
-
-On new terminal, go to `feature_repo/` folder.
+#### 3. Run Feast
+To store preprocessed-dataset. 
+On new terminal, go to [`feature_repo/`](./feature_repo/feature_store.yaml) folder.
 
 ```bash
 cd mlflow-training-pipeline
 cd feature_repo
 ```
 
-**For bash terminal**
+**Export environment variables**
 
 ```bash
 export POSTGRES_USER=<postgres-name>
@@ -194,6 +204,8 @@ export REDIS_PORT=<redis-port>
 export REDIS_PASSWORD=<redis-password>
 ```
 
+**Execute the code**
+
 ```bash
 feast apply
 
@@ -201,13 +213,13 @@ feast apply
 feast materialize 2025-06-01T00:00:00 2025-10-10T23:59:59
 ```
 
-To run feast locally,
+**(Optional) To run feast locally**
 
 ```bash
 python main.py
 ```
 
-**4. Run MLflow**
+#### 4. Run MLflow
 
 If Mlflow is running in cloud. Skip this step.
 
@@ -216,8 +228,7 @@ cd mlfow-training-pipeline
 mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlruns --host 127.0.0.1 --port 5000
 ```
 
-
-**5. Run model-pipeline code**
+#### 5. Run model-pipeline
 
 Model pipeline gets data from feast, use feast credentials.
 
@@ -235,6 +246,7 @@ export REDIS_PASSWORD=<redis-password>
 If mlflow is running in cloud (aws/azure), use aws/azure credentials.
 
 ```bash
+# bash
 export AZURE_STORAGE_ACCOUNT_NAME=<account-name>
 export AZURE_STORAGE_ACCESS_KEY=<access-key>
 
@@ -242,6 +254,8 @@ export AZURE_STORAGE_ACCESS_KEY=<access-key>
 $env:AZURE_STORAGE_ACCOUNT_NAME=<account-name>
 $env:AZURE_STORAGE_ACCESS_KEY=<access-key>
 ```
+
+**Execute the code**
 
 ```bash
 python -m ml.src.model_pipeline.index
@@ -256,19 +270,19 @@ python prediction.py
 
 #### Step-6: Testing/Prediction
 
-Run [`inference_test.py`](ml/tests/inference_test.py) to make predictions. If 'animal' is not found, you will be prompted to enter animal features, and the model will predict the class.
+Run [`inference_test.py`](./ml/tests/inference_test.py) to make predictions. If 'animal' is not found, you will be prompted to enter animal features, and the model will predict the class.
+
 
 ```bash
 cd mlflow-training-pipeline
 python ml.tests.inference_test
 ```
 
-## Run Frontend
-
-At [flask-app](./flask_app/) had separate virtual environment for frontend.
+#### Step-7: Run Frontend
+A separate virtual environment is created for [frontend](./frontend).
 
 ```bash
-cd flask_app
+cd frontend
 
 # for windows
 python -m venv venv
@@ -279,17 +293,61 @@ python3 -m venv venv
 source venv/Scripts/activate
 ```
 
-Then run the frontend
+**Execute the code**
 
 ```bash
 python app.py
 ```
 
-## Contribution
+## MLOps Monitoring
 
-Please read our [Contributing Guidelines](CONTRIBUTION.md) before submitting pull requests.
+[Monitoring](./monitoring/) helps track the performance of your ML model, monitor important metrics, and keep an eye on the underlying system infrastructure.
+
+### Running the `scripts/` Folder
+
+When you run the data pipeline and model pipeline, the reference data and live data are automatically stored in a SQLite3 database.
+
+However, the `class_name` column in the live_data table may contain `NULL` values.
+
+This happens when certain animals are not found in the Feast feature store, which is used to save the reference dataset.
+
+In such cases, predictions are made using the newly extracted features.
+
+To address this, you need to update and run the **[feedback-loop](./monitoring/scripts/feedback_loop.py)** script to populate the missing `class_name` values in the database.
+
+```bash
+cd monitoring/scripts
+
+python -m feedback_loop.py
+```
+
+### Running metrics in Evidently
+
+Setup Evidently cloud by signning or logging in [Evidently](https://docs.evidentlyai.com/introduction).
+
+Generate Access Token and save the configuration in `.env` file.
+
+```txt
+EVIDENTLY_URL=https://app.evidently.cloud
+EVIDENTLY_TOKEN=<access-token>
+```
+
+Go to [evidently_monitor/](./monitoring/evidently_monitor/) and run the pipeline
+
+```bash
+cd monitoring
+
+python -m evidently_monitor.index
+```
+
+This will save the reports automatically in `reports/` fodler based on date and time.
+
+You can also see the metrics in Evidently cloud via your account.
+
+
+## Contribution
+Please read our [Contributing Guidelines](./CONTRIBUTION.md) before submitting pull requests.
 
 
 ## License
-This project is under [MIT Licence](LICENCE) support.
-
+This project is under [MIT Licence](./LICENCE) support.
