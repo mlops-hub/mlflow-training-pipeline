@@ -1,11 +1,12 @@
 import sqlite3
 import pandas as pd
-from datetime import datetime
-import os
+from pathlib import Path
 
-DB_DIR = os.path.join(os.path.dirname(__file__), "db")
-DB_PATH = os.path.join(DB_DIR, "reference_data.db")
-os.makedirs(DB_DIR, exist_ok=True)
+DB_DIR = Path(__file__).resolve().parent.parent / "db"
+DB_DIR.mkdir(parents=True, exist_ok=True)
+
+DB_PATH = DB_DIR / "reference_data.db"
+# print(DB_PATH)
 
 def save_reference_data(df: pd.DataFrame):
     conn = sqlite3.connect(DB_PATH)

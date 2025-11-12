@@ -33,12 +33,17 @@ class MonitorCore:
             description="Live dataset in real-time"
         )
 
+        data_quality = Report([ DataSummaryPreset() ], include_tests=True)
+        data_drift = Report([ DataDriftPreset() ], include_tests=True)
+        prediction_drift = Report([ ValueDrift(column='prediction') ], include_tests=True)
+        classy_report = Report([ ClassificationPreset() ], include_tests=True)
+
         # process reports
         reports = {
-            "data_quality": Report([ DataSummaryPreset() ]),
-            "data_drift": Report([ DataDriftPreset() ]),
-            "prediction_drift": Report([ ValueDrift(column='prediction') ]),
-            "classification": Report([ ClassificationPreset() ]),
+            "data_quality": data_quality,
+            "data_drift": data_drift,
+            "prediction_drift": prediction_drift,
+            "classification": classy_report,
         }
 
         results = {}

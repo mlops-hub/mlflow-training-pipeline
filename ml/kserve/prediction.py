@@ -10,10 +10,10 @@ from prometheus_client import Counter, Histogram, start_http_server
 load_dotenv()
 
 MLFLOW_TRACKING_URI = os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000")
-MODEL_VERSION = os.environ.get("MODEL_VERSION", "4")
-MODEL_NAME = os.environ.get("MODEL_NAME", "Animal Classifier")
+MODEL_VERSION = os.environ.get("MODEL_VERSION", "1")
+MODEL_NAME = os.environ.get("MODEL_NAME", "Animal Classifier Model")
 KSERVE_PORT = int(os.environ.get("KSERVE_PORT", 7070))
-PROMETHEUS_PORT = int(os.environ.get("PROMETHEUS_PORT", 9090))
+PROMETHEUS_PORT = int(os.environ.get("KSERVE_PROMETHEUS_PORT", 7071))
 
 # promethes metrics
 

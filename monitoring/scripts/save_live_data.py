@@ -1,11 +1,12 @@
 import sqlite3
 import pandas as pd
 from datetime import datetime
-import os
+from pathlib import Path
 
-LIVE_DIR = os.path.join(os.path.dirname(__file__), "db")
-LIVE_DB_PATH = os.path.join(LIVE_DIR, "live_data.db")
-os.makedirs(LIVE_DIR, exist_ok=True)
+LIVE_DIR = Path(__file__).resolve().parent.parent / "db" 
+LIVE_DIR.mkdir(parents=True, exist_ok=True)
+
+LIVE_DB_PATH = LIVE_DIR / "live_data.db"
 
 def init_live_db():
     """Initialize live_data.db with the same schema as reference_data (minus class_name)."""

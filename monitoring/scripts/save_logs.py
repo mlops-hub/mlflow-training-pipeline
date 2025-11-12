@@ -1,8 +1,11 @@
 import sqlite3
 import datetime
-import os
+from pathlib import Path
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "db/inference_logs.db")
+DB_DIR = Path(__file__).resolve().parent.parent / "db" 
+DB_DIR.mkdir(parents=True, exist_ok=True)
+
+DB_PATH = DB_DIR / "inference_logs.db"
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -29,5 +32,3 @@ def log_prediction(input_data: str, prediction: str, confidence: float):
     )
     conn.commit()
     conn.close()
-
-

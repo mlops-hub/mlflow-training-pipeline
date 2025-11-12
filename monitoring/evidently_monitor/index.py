@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+import time
 from dotenv import load_dotenv
 from .config import *
 from .data_loader import DataLoader
@@ -36,19 +37,21 @@ class MonitorPipeline:
 
     def run_daily(self):
         start_prometheus_server(PROMETHEUS_PORT)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        date_str = datetime.now().strftime("%Y%m%d")
 
         print("🚀 Starting Animal Classification Monitoring...")
         monitor = MonitorCore(self.ws, self.project_id, self.loader)
         reports = monitor.generate_reports()
         if not reports:
             return
-
-        self.alert_engine.process_reports(reports, timestamp)
+        self.alert_engine.process_reports(reports, date_str)
         print("✅ Monitoring completed successfully!")
+        return
 
 
 if __name__ == '__main__':
     pipeline = MonitorPipeline()
     pipeline.run_daily()
+    while True:
+        time.sleep(60)
 

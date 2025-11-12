@@ -8,6 +8,7 @@ feature_repo/data/
 */__pycache__
 */*/__pycache__
 */db_logs
+*/db
 */reports
 
 */mlruns
