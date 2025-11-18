@@ -28,7 +28,7 @@ class MonitorPipeline:
         if PROJECT_ID:
             print(f"Using existing project: {PROJECT_ID}")
             return PROJECT_ID
-        print("Cteating new Evidently Cloud project.... ")
+        print("Creating new Evidently Cloud project.... ")
         project = self.ws.create_project("Animal classification", org_id=ORG_ID)
         project.description = "Animal Classification Project to classify animals based on animal names or features"
         project.save()

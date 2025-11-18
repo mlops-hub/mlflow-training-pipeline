@@ -1,8 +1,8 @@
 import sqlite3
 from pathlib import Path
 
-source_db = Path(__file__).parent.parent / "db_logs" / "live_db.db"
-dest_db = Path(__file__).parent.parent / "db" / "live_db.db"
+source_db = Path(__file__).parent.parent / "db_logs" / "live_data.db"
+dest_db = Path(__file__).parent.parent / "db" / "live_data.db"
 
 src_conn = sqlite3.connect(source_db)
 dest_conn = sqlite3.connect(dest_db)
